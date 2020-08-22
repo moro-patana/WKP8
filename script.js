@@ -31,16 +31,17 @@ let songs = [
 
 const albums = document.querySelector(`.albums`);
 const postForm = document.querySelector(`.post-form`);
+const searching = document.querySelector(`.searching`);
 
 
 const showSongList = () => {
     const html = songs
     .map(song => {
         return `
-        <ul>
+        <ul class="song-list">
             <li>
                 <span><img class="artist" src="${song.picture}" alt="pic"></span>
-                <span>${song.title}<small>${song.style}</small></span>
+                <span class="${song.style}">${song.title}<small>${song.style}</small></span>
                 <span>${song.artist}<small>${song.length}</small></span>
                 <span>
                     Score:
@@ -84,6 +85,15 @@ const scoreCounter = e => {
         count += 1;
     }
 
+}
+
+const searchForm = e => {
+    const songList = e.target.closest(`ul.song-list`);
+    if (searchForm.value === song.style) {
+       songList.classList.add(`open`);
+    } else {
+        songList.classList.remove(`open`);
+    }
 }
 
 const handleClick = e => {
