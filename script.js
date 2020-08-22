@@ -1,5 +1,5 @@
 // Create an array
-const songs = [
+let songs = [
     {
         picture: "https://i.ytimg.com/vi/NIF6Y3IX9Ow/hqdefault.jpg",
         title: "RN44",
@@ -27,17 +27,10 @@ const songs = [
         score: 0,
         id: 1598077291521
     }
-
-
 ]
 
 const albums = document.querySelector(`.albums`);
 const postForm = document.querySelector(`.post-form`);
-const songTitle = document.querySelector(`input[name="songTitle"]`);
-const artistName = document.querySelector(`input[name="artistName"]`);
-const songStyle = document.querySelector(`#style-select`);
-const duration = document.querySelector(`#duration-select`);
-const artistPicture = document.querySelector(`input[name="url"]`);
 
 
 const showSongList = () => {
@@ -51,11 +44,11 @@ const showSongList = () => {
                 <span>${song.artist}<small>${song.length}</small></span>
                 <span>
                     Score:
-                <button>+1</button>
+                <button value="${song.id}" class="score">${song.score}</button>
                 </span>
                 <span>
-                <button>
-                    <img class="delete" src="./img/delete-icon.webp" alt="trash">
+                <button class="delete" value="${song.id}">
+                    <img class="delete-icon" src="./img/delete-icon.webp" alt="trash">
                 </button>
                 </span>
             </li>
@@ -67,3 +60,53 @@ albums.innerHTML = html;
 };
 showSongList();
 
+const addSong = e => {
+	e.preventDefault();
+	const formEl = e.currentTarget;
+	const newSong = {
+		picture: formEl.picture.value,
+		title: formEl.title.value,
+		style: formEl.style.value,
+		artist: formEl.artist.value,
+        length: formEl.length.value,
+        score: 0,
+		id: Date.now(),
+    };
+    console.log(songs);
+    songs.push(newSong);
+    albums.dispatchEvent(new CustomEvent('listUpdated'));
+    postForm.reset();
+};
+const scoreCounter = e => {
+    const scoreBtn = e.target.closest('button.score');
+    let count = 0;
+    if (scoreBtn) {
+        count += 1;
+    }
+
+}
+
+const handleClick = e => {
+	const deleteBtn = e.target.closest('button.delete');
+	if (deleteBtn) {
+		const id = Number(deleteBtn.value);
+		console.log(id);
+        deleteSong(id);
+        albums.dispatchEvent(new CustomEvent('listUpdated'));
+    }
+    const scoreBtn = e.target.closest('button.score');
+    let count = 0;
+      if (scoreBtn) {
+          count += 1;
+          albums.dispatchEvent(new CustomEvent('listUpdated'));
+      }
+
+};
+const deleteSong = idToDelete => {
+    songs = songs.filter(song => song.id !== idToDelete);
+    albums.dispatchEvent(new CustomEvent('listUpdated'));
+};
+postForm.addEventListener('submit', addSong);
+albums.addEventListener('click', handleClick);
+albums.addEventListener('click', scoreCounter);
+albums.addEventListener(`listUpdated`, showSongList);
